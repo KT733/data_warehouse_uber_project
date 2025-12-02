@@ -1,90 +1,55 @@
-# SQL commands
-===================COPY TABLE FROM HW2===================
-USE ROLE TRAINING_ROLE;
-USE DATABASE FIVETRAN_DATABASE;
+# 🚕 Uber Ride Analytics – Modern Data Stack Project
 
-CREATE SCHEMA IF NOT EXISTS HW3_CHEETAH;
+This project demonstrates a complete **end-to-end Modern Data Stack pipeline** using real Uber ride booking data.  
+The goal is to build a **production-grade analytics system** that ingests raw data, transforms it into analytics-ready models, and visualizes insights in an interactive dashboard.
 
-GRANT USAGE ON SCHEMA FIVETRAN_DATABASE.HW3_CHEETAH TO ROLE TRAINING_ROLE;
-GRANT CREATE TABLE ON SCHEMA FIVETRAN_DATABASE.HW3_CHEETAH TO ROLE TRAINING_ROLE;
+---
 
-CREATE OR REPLACE TABLE FIVETRAN_DATABASE.HW3_CHEETAH.STAGING_ARTICLE_DETAILS AS
-SELECT *
-FROM FIVETRAN_DATABASE.HW2_CHEETAH.ARTICLE_DETAILS;
+## ⭐ Project Objective
 
-CREATE OR REPLACE TABLE FIVETRAN_DATABASE.HW3_CHEETAH.STAGING_PAGE_VIEWS AS
-SELECT *
-FROM FIVETRAN_DATABASE.HW2_CHEETAH.PAGEVIEWS;
+Build a fully operational data analytics pipeline using:
 
-SHOW TABLES IN SCHEMA FIVETRAN_DATABASE.HW3_CHEETAH;
+- **Fivetran** → Automated ingestion of CSV data from Google Drive  
+- **Snowflake** → Cloud data warehouse storing raw + transformed tables  
+- **dbt** → Transformations, models, tests, and analytics marts  
+- **Streamlit** → Interactive dashboard for ride analytics  
 
-===================STAGING PAGE VIEWS===================
-select *
-from FIVETRAN_DATABASE.HW3_CHEETAH.STAGING_PAGE_VIEWS
+This project simulates a real enterprise data workflow, applying:
+- ELT modeling  
+- Dimensional modeling (fact + dimensions)  
+- Transformation logic  
+- Data quality testing  
+- Modern BI dashboard development  
 
-===================STAGING ARTICLE DETAILS===================
-select *
-from FIVETRAN_DATABASE.HW3_CHEETAH.STAGING_ARTICLE_DETAILS
+---
 
-===================FACT PAGE VIEWS===================
-with dimension as (select article_id, title, article, page_length, 
-        cast(last_revision_date as date) as  last_revision_date
-from {{ ref('stg_article_details') }})
+# 📊 Final Dashboard (Streamlit)
 
-, fact as (select article_id, b.article, cast(date as date) as view_date, views
-from {{ ref('stg_page_views') }} b
-left join dimension a on a.article = b.article)
+**Features:**
+- Total rides over time  
+- Average ride distance trend  
+- Most frequent pickup locations  
+- Filters by date range  
+- Raw ride data preview + CSV download  
 
-SELECT
-  article_id,
-  article,
-  view_date,
-  views,
+Run streamlit:
 
-  -- 7-day rolling average of views per article (min_periods=1)
-  ROUND(
-    AVG(views) OVER (
-      PARTITION BY article_id
-      ORDER BY view_date
-      ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
-    )
-  , 2) AS views_7d_avg,
+```bash
+pip install streamlit pandas plotly cryptography snowflake-connector-python
+streamlit run app.py
 
-  -- Cumulative sum of views per article
-  SUM(views) OVER (
-    PARTITION BY article_id
-    ORDER BY view_date
-    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-  ) AS cum_views,
+Run dbt:
 
-  -- Share of total views on that date (across all articles), in %
-  ROUND(
-    100 * views / NULLIF(
-      SUM(views) OVER (PARTITION BY view_date),
-      0
-    )
-  , 2) AS percent_views
-FROM fact
-===================FACT ARTICLE DETAILS===================
-select 
-    article_id, 
-    title, 
-    article, 
-    page_length, 
-    cast(last_revision_date as date) as last_revision_date
-from {{ ref('stg_article_details') }}
-
-===================ANALYSIS===================
-select title, sum(views) as total_views
-from FIVETRAN_DATABASE.HW3_CHEETAH.FCT_PAGE_VIEWS
-left join FIVETRAN_DATABASE.HW3_CHEETAH.STAGING_ARTICLE_DETAILS using(article_id)
-group by title
-order by sum(views) desc
-
-# dbt commands
+```bash
+# setup
+conda create -n dbt311 python=3.11
 conda activate dbt311
-dbt debug
-dbt run
-dbt test
-dbt docs generate
-dbt docs serve
+pip install dbt-core dbt-snowflake
+dbt init dw_project
+
+#run
+dbt debug       # test connection
+dbt run         # build staging + marts
+dbt test        # run data quality tests
+dbt docs serve  # open documentation UI
+
