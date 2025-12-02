@@ -37,7 +37,7 @@ Run streamlit:
 ```bash
 pip install streamlit pandas plotly cryptography snowflake-connector-python
 streamlit run app.py
-
+```
 Run dbt:
 
 ```bash
@@ -52,4 +52,4 @@ dbt debug       # test connection
 dbt run         # build staging + marts
 dbt test        # run data quality tests
 dbt docs serve  # open documentation UI
-
+```
