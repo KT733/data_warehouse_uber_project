@@ -1,0 +1,6 @@
+sources:
+  - name: google_drive 
+    database: FIVETRAN_DATABASE
+    schema: google_drive
+    tables:
+      - name: ncr_ride_bookings

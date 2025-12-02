@@ -1,0 +1,21 @@
+models:
+  - name: stg_uber_bookings
+    columns:
+      - name: booking_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_locations
+    columns:
+      - name: location_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fact_rides
+    columns:
+      - name: booking_id
+        tests:
+          - not_null
+          - unique
