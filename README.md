@@ -1,11 +1,11 @@
-# 🚕 Uber Ride Analytics – Modern Data Stack Project
+# Uber Ride Analytics – Modern Data Stack Project
 
-This project demonstrates a complete **end-to-end Modern Data Stack pipeline** using real Uber ride booking data.  
-The goal is to build a **production-grade analytics system** that ingests raw data, transforms it into analytics-ready models, and visualizes insights in an interactive dashboard.
+- This project demonstrates a complete **end-to-end Modern Data Stack pipeline** using real Uber ride booking data.  
+- The goal is to build a **production-grade analytics system** that ingests raw data, transforms it into analytics-ready models, and visualizes insights in an interactive dashboard.
 
 ---
 
-## ⭐ Project Objective
+## Project Objective
 
 Build a fully operational data analytics pipeline using:
 
@@ -23,7 +23,7 @@ This project simulates a real enterprise data workflow, applying:
 
 ---
 
-# 📊 Final Dashboard (Streamlit)
+## Final Dashboard (Streamlit)
 
 **Features:**
 - Total rides over time  
@@ -31,6 +31,10 @@ This project simulates a real enterprise data workflow, applying:
 - Most frequent pickup locations  
 - Filters by date range  
 - Raw ride data preview + CSV download  
+
+---
+
+## How to Run
 
 Run streamlit:
 
